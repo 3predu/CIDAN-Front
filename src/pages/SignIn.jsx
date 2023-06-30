@@ -1,6 +1,5 @@
 import {
-    useState,
-    useEffect
+    useState
 } from "react";
 
 import {
@@ -72,6 +71,9 @@ export default function SignIn() {
                 display: "flex"
             }}
         >
+            <img src="./images/logo-cdan.png" alt=""
+                className={styles.Logo}
+            />
             <Box
                 sx={{
                     width: "50%",
@@ -124,13 +126,29 @@ export default function SignIn() {
                                 mb: 4
                             }}
                         >
-                            Ainda não tem uma conta? <Link href="/sign-up" underline="hover">Criar</Link>
+                            Ainda não tem uma conta? <Link sx={{color:"#2eb82e"}} href="/sign-up" underline="hover">Criar</Link>
                         </Typography>
 
                         <TextField
                             label="Login"
                             sx={{
-                                mb: 2
+                                mb: 2,
+                                "& label.Mui-focused": {
+                                    color: "#2eb82e"},
+                                "& .MuiInput-underline:after": {
+                                    borderBottomColor:  "#2eb82e"
+                                },
+                                "& .MuiFilledInput-underline:after": {
+                                    borderBottomColor: "#2eb82e"},
+                                "& .MuiOutlinedInput-root": {
+                                    "&.Mui-focused fieldset": {
+                                    borderColor: "#2eb82e"}
+                                }
+                            }}
+                            InputProps={{
+                                sx:{
+                                    borderRadius: "12px"
+                                },
                             }}
                             onChange={(e) => setLogin(e.target.value)}
                             onBlur={(e) => {
@@ -148,9 +166,23 @@ export default function SignIn() {
                             type={passwordVisible ? "text" : "password"}
                             label="Senha"
                             sx={{
-                                mb: 4
+                                mb: 4,
+                                "& label.Mui-focused": {
+                                    color: "#2eb82e"},
+                                "& .MuiInput-underline:after": {
+                                    borderBottomColor:  "#2eb82e"
+                                },
+                                "& .MuiFilledInput-underline:after": {
+                                    borderBottomColor: "#2eb82e"},
+                                "& .MuiOutlinedInput-root": {
+                                    "&.Mui-focused fieldset": {
+                                    borderColor: "#2eb82e"}
+                                }
                             }}
                             InputProps={{
+                                sx:{
+                                    borderRadius: "12px"
+                                },
                                 endAdornment: (
                                     <IconButton
                                         onClick={() => setPasswordVisible(!passwordVisible)}
@@ -177,7 +209,8 @@ export default function SignIn() {
                             variant="contained"
                             size="large"
                             sx={{
-                                borderRadius: "12px"
+                                borderRadius: "12px",
+                                backgroundColor: "#2eb82e",
                             }}
                             type="submit"
                         >
@@ -195,7 +228,7 @@ export default function SignIn() {
             >
                 <img
                     className={styles.Img}
-                    src="./images/IMG_2593.jpg"
+                    src="./images/cdan-culto.jpg"
                     alt=""
                 />
             </Box>

@@ -2,11 +2,22 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+}
+
+.Logo{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 25px;
+    left: 25px;
 }
 
 .Form {
+    min-width: 55%;
     height: 100%;
-    width: 75%;
     display: flex;
     flex-direction: column;
     justify-content: center;
