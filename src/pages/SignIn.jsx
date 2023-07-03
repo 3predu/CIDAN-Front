@@ -23,6 +23,8 @@ import styles from "../style/SignIn.module.css";
 import UserModel from "../models/UserModel";
 
 import EmptyFieldException from "../exceptions/EmptyFieldException";
+import UnauthorizedException from "../exceptions/UnauthorizedException";
+import ServerSideException from "../exceptions/ServerSideException";
 
 export default function SignIn() {
     const [login, setLogin] = useState("");
@@ -56,6 +58,16 @@ export default function SignIn() {
 
                 !login && setLoginValid(false);
                 !password && setPasswordValid(false);
+            } else if (error instanceof UnauthorizedException) {
+                setAlertOpen(true);
+                setSeverityAlert(error.severityAlert);
+                setMessageAlert(error.message);
+
+            } else if (error instanceof ServerSideException) {
+                setAlertOpen(true);
+                setSeverityAlert(error.severityAlert);
+                setMessageAlert(error.message);
+
             } else {
                 setAlertOpen(true);
                 setSeverityAlert("error");
