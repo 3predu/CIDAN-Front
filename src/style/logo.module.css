@@ -1,0 +1,8 @@
+.Logo{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    display: block;
+    top: 25px;
+    left: 25px;
+}
