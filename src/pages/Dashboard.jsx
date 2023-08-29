@@ -7,21 +7,49 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import stylesDashboard from "../style/Dashboard.module.css";
-import InboxIcon from "@mui/icons-material/Inbox";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Plot from "react-plotly.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const [open, setOpen] = useState(true);
-  function handleClick() {
-    setOpen(!open);
+  const navigate = useNavigate();
+
+  const chartData = {
+    x: ["Unidade 1", "Unidade 2", "Unidade 3", "Unidade 4"],
+    y: [100, 200, 300, 400],
+    type: "bar",
   }
+
+  const requisitos = ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"];
+
+  const requisitosUnidades = [
+    {
+      unidade: "Unidade 1",
+      requisitos: [100, 200, 300, 400]
+    },
+    {
+      unidade: "Unidade 2",
+      requisitos: [100, 200, 300, 400]
+    },
+    {
+      unidade: "Unidade 3",
+      requisitos: [100, 200, 300, 400]
+    },
+    {
+      unidade: "Unidade 4",
+      requisitos: [100, 200, 300, 400]
+    }
+  ]
 
   return (
     <Box
@@ -46,40 +74,23 @@ export default function Dashboard() {
           />
           <List>
             <ListItem disablePadding>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => navigate("/dashboard")}
+              >
                 <ListItemIcon>
                   <HomeIcon style={{ color: "#1e3932" }} />
                 </ListItemIcon>
                 <ListItemText primary="Início" />
               </ListItemButton>
             </ListItem>
-            <ListItemButton onClick={handleClick}>
+            <ListItemButton
+              onClick={() => navigate("/unities")}
+            >
               <ListItemIcon>
                 <PeopleIcon style={{ color: "#1e3932" }} />
               </ListItemIcon>
               <ListItemText primary="Unidades" />
-              {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 5 }}>
-                  <ListItemIcon></ListItemIcon>
-                  <ListItemText primary="Unidade 1" />
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 5 }}>
-                  <ListItemIcon></ListItemIcon>
-                  <ListItemText primary="Unidade 2" />
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 5 }}>
-                  <ListItemIcon></ListItemIcon>
-                  <ListItemText primary="Unidade 3" />
-                </ListItemButton>
-                <ListItemButton sx={{ pl: 5 }}>
-                  <ListItemIcon></ListItemIcon>
-                  <ListItemText primary="Unidade 4" />
-                </ListItemButton>
-              </List>
-            </Collapse>
             <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -95,9 +106,62 @@ export default function Dashboard() {
       <Box
         sx={{
           width: "calc(100% - 280px)",
+          p: 2
         }}
       >
-        <Typography>Olá Mundo!</Typography>
+        <Box
+          sx={{
+            width: "100%",
+            height: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <Plot
+            data={[chartData]}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            width: "100%",
+            height: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Unidade</TableCell>
+                {
+                  requisitos.map(requisito => (
+                    <TableCell>{requisito}</TableCell>
+                  ))
+                }
+                <TableCell>Total</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+                {
+                  requisitosUnidades.map(requisitoUnidade => (
+                    <TableRow>
+                      <TableCell>{requisitoUnidade.unidade}</TableCell>
+                      {
+                        requisitoUnidade.requisitos.map(requisito => (
+                          <TableCell>{requisito}</TableCell>
+                        ))
+                      }
+                      <TableCell>{requisitoUnidade.requisitos.reduce((a, b) => a + b, 0)}</TableCell>
+                    </TableRow>
+                  ))
+                }
+            </TableBody>
+          </Table>
+        </Box>
       </Box>
     </Box>
   );

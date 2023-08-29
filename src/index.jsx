@@ -9,6 +9,8 @@ import {
 
 import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
+import Unities from "./pages/Unities";
+import AddUnities from "./pages/AddUnities";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />
+  },
+  {
+    path: "/unities",
+    element: <Unities />
+  },
+  {
+    path: "/unities/add",
+    element: <AddUnities />
   }
 ]);
 

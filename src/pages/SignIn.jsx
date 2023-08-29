@@ -22,8 +22,11 @@ import UserModel from "../models/UserModel";
 import EmptyFieldException from "../exceptions/EmptyFieldException";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
 import ServerSideException from "../exceptions/ServerSideException";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
+  const navigate = useNavigate();
+
   const [login, setLogin] = useState("");
   const [loginValid, setLoginValid] = useState(true);
 
@@ -43,9 +46,7 @@ export default function SignIn() {
 
       const { message } = await user.signIn();
 
-      setAlertOpen(true);
-      setSeverityAlert("success");
-      setMessageAlert(message);
+      navigate("/dashboard");
     } catch (error) {
       if (error instanceof EmptyFieldException) {
         setAlertOpen(true);
