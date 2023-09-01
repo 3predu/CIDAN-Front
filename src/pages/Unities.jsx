@@ -1,33 +1,33 @@
 import {
   Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
   Typography,
   Button,
   Grow,
   Alert,
   TextField,
+  CircularProgress
 } from "@mui/material";
-import stylesDashboard from "../style/Dashboard.module.css";
-import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import LeftBar from "../components/LeftBar";
+import DataTable from "../components/DataTable";
+import UnityModel from "../models/UnityModel";
 
 export default function Unities() {
+  const [unityName, setUnityName] = useState("");
+
+  const [unities, setUnities] = useState([]);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertSeverity, setAlertSeverity] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (location.state) {
@@ -42,6 +42,20 @@ export default function Unities() {
       delete location.state;
     }
   }, []);
+
+  async function searchUnities() {
+    try {
+      setLoading(true);
+
+      const { unities } = await new UnityModel({}).findMany(unityName);
+
+      setUnities(unities);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Box
@@ -109,7 +123,7 @@ export default function Unities() {
             label="Nome da Unidade"
             variant="outlined"
             fullWidth
-            // onChange={(e) => setUnityName(e.target.value)}
+            onChange={(e) => setUnityName(e.target.value)}
           />
 
           <Box
@@ -128,14 +142,59 @@ export default function Unities() {
                   backgroundColor: "#2eb82e",
                   opacity: 0.8,
                 },
+                width: "125px",
               }}
-              startIcon={<SearchIcon />}
-              // onClick={addUnity}
+              startIcon={loading ? <CircularProgress size="1.45rem" color="inherit" /> : <SearchIcon />}
+              onClick={searchUnities}
             >
               Buscar
             </Button>
           </Box>
         </Box>
+
+        {
+          unities.length > 0 && (
+            <DataTable
+              data={unities}
+              columns={[
+                {
+                  label: "Nome",
+                  selector: (unity) => unity.name
+                },
+                {
+                  label: "Criada em",
+                  selector: (unity) => unity.createdAt
+                },
+                {
+                  label: "Atualizada em",
+                  selector: (unity) => unity.updatedAt
+                },
+                {
+                  label: "Desativada em",
+                  selector: (unity) => unity.deletedAt
+                }
+              ]}
+              options={[
+                {
+                  element: (
+                    <Button>
+                      Editar
+                    </Button>
+                  ),
+                  onClick: (unity) => console.log(`/unities/${unity.id}`)
+                },
+                {
+                  element: (
+                    <Button>
+                      Desativar
+                    </Button>
+                  ),
+                  onClick: (unity) => console.log(`/unities/${unity.id}`)
+                }
+              ]}
+            />
+          )
+        }
       </Box>
     </Box>
   );

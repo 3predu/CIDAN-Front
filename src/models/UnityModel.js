@@ -7,14 +7,14 @@ import BadRequestException from "../exceptions/BadRequestException";
 export default class UnityModel {
     #id;
     #name;
-    #createAt;
+    #createdAt;
     #updatedAt;
     #deletedAt;
 
     constructor({ id, name, createdAt, updatedAt, deletedAt }) {
         this.#id = id;
         this.#name = name;
-        this.#createAt = createdAt;
+        this.#createdAt = createdAt;
         this.#updatedAt = updatedAt;
         this.#deletedAt = deletedAt;
     }
@@ -31,8 +31,8 @@ export default class UnityModel {
         this.#name = name;
     }
 
-    get createAt() {
-        return this.#createAt;
+    get createdAt() {
+        return this.#createdAt;
     }
 
     get updatedAt() {
@@ -93,5 +93,41 @@ export default class UnityModel {
 
     async delete() {}
 
-    async findMany() {}
+    async findMany(name) {
+        try {
+            const token = localStorage.getItem('token');
+    
+            const response = await fetch(`${API_URL}/unity?name=${name}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const statusResponse = response.status;
+
+            const { message, unities } = await response.json();
+
+            switch (statusResponse) {
+                case 200:
+                    return {
+                        message,
+                        unities
+                    }
+
+                case 400:
+                    throw new BadRequestException(message, "warning");
+
+                case 401:
+                    throw new UnauthorizedException(message, "warning");
+
+                case 500:
+                    throw new ServerSideException(message, "error");
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
 }
