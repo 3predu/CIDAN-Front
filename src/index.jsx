@@ -10,31 +10,22 @@ import {
 import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Unities from "./pages/Unities";
-import AddUnities from "./pages/AddUnities";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <SignIn />
+    element: <SignIn />,
   },
   {
     path: "/dashboard",
-    element: <Dashboard />
+    element: <Dashboard />,
   },
   {
     path: "/unities",
-    element: <Unities />
+    element: <Unities />,
   },
-  {
-    path: "/unities/add",
-    element: <AddUnities />
-  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(
-  <RouterProvider
-    router={router}
-  />
-);
+root.render(<RouterProvider router={router} />);

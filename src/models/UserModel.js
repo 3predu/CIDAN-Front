@@ -1,5 +1,4 @@
 import { API_URL } from "../config";
-
 import EmptyFieldException from "../exceptions/EmptyFieldException";
 import ServerSideException from "../exceptions/ServerSideException";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
