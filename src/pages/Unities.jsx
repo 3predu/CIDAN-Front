@@ -5,7 +5,7 @@ import {
   Grow,
   Alert,
   TextField,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
@@ -14,6 +14,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import LeftBar from "../components/LeftBar";
 import DataTable from "../components/DataTable";
 import UnityModel from "../models/UnityModel";
+import UnauthorizedException from "../exceptions/UnauthorizedException";
+import ServerSideException from "../exceptions/ServerSideException";
+import EmptyFieldException from "../exceptions/EmptyFieldException";
+import BadRequestException from "../exceptions/BadRequestException";
 
 export default function Unities() {
   const [unityName, setUnityName] = useState("");
@@ -24,8 +28,8 @@ export default function Unities() {
   const location = useLocation();
 
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertSeverity, setAlertSeverity] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setSeverityAlert] = useState("");
+  const [alertMessage, setMessageAlert] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -34,14 +38,51 @@ export default function Unities() {
       const state = location.state;
 
       setAlertOpen(true);
-      setAlertMessage(state.message);
-      setAlertSeverity(state.severity);
+      setMessageAlert(state.message);
+      setSeverityAlert(state.severity);
 
       window.history.replaceState({}, document.title);
 
       delete location.state;
     }
   }, []);
+
+  async function addUnity() {
+    try {
+      const unity = new UnityModel({ name: unityName });
+
+      const { message } = await unity.create();
+      // navigate("/unities", {
+      //   state: { message, severity: "success" },
+      //   replace: true,
+      // });
+      setMessageAlert(message);
+      setSeverityAlert("success");
+      setAlertOpen(true);
+    } catch (error) {
+      if (error instanceof EmptyFieldException) {
+        setAlertOpen(true);
+        setSeverityAlert(error.severityAlert);
+        setMessageAlert(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        setAlertOpen(true);
+        setSeverityAlert(error.severityAlert);
+        setMessageAlert(error.message);
+      } else if (error instanceof ServerSideException) {
+        setAlertOpen(true);
+        setSeverityAlert(error.severityAlert);
+        setMessageAlert(error.message);
+      } else if (error instanceof BadRequestException) {
+        setAlertOpen(true);
+        setSeverityAlert(error.severityAlert);
+        setMessageAlert(error.message);
+      } else {
+        setAlertOpen(true);
+        setSeverityAlert("error");
+        setMessageAlert(error.message);
+      }
+    }
+  }
 
   async function searchUnities() {
     try {
@@ -70,6 +111,7 @@ export default function Unities() {
         sx={{
           width: "calc(100% - 280px)",
           p: 2,
+          overflowY: "auto",
         }}
       >
         <Grow in={alertOpen} mountOnEnter unmountOnExit>
@@ -94,21 +136,6 @@ export default function Unities() {
           <Typography variant="h4" fontSize="2rem" fontWeight={700}>
             Unidades
           </Typography>
-
-          <Button
-            sx={{
-              backgroundColor: "#2eb82e",
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "#2eb82e",
-                opacity: 0.8,
-              },
-            }}
-            startIcon={<AddIcon />}
-            onClick={() => navigate("/unities/add")}
-          >
-            Adicionar
-          </Button>
         </Box>
 
         <Box
@@ -136,6 +163,7 @@ export default function Unities() {
             <Button
               variant="contained"
               sx={{
+                marginRight: "10px",
                 backgroundColor: "#2eb82e",
                 color: "#fff",
                 "&:hover": {
@@ -144,57 +172,69 @@ export default function Unities() {
                 },
                 width: "125px",
               }}
-              startIcon={loading ? <CircularProgress size="1.45rem" color="inherit" /> : <SearchIcon />}
+              startIcon={
+                loading ? (
+                  <CircularProgress size="1.45rem" color="inherit" />
+                ) : (
+                  <SearchIcon />
+                )
+              }
               onClick={searchUnities}
             >
               Buscar
             </Button>
+
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#2eb82e",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#2eb82e",
+                  opacity: 0.8,
+                },
+              }}
+              startIcon={<AddIcon />}
+              onClick={addUnity}
+            >
+              Adicionar
+            </Button>
           </Box>
         </Box>
 
-        {
-          unities.length > 0 && (
-            <DataTable
-              data={unities}
-              columns={[
-                {
-                  label: "Nome",
-                  selector: (unity) => unity.name
-                },
-                {
-                  label: "Criada em",
-                  selector: (unity) => unity.createdAt
-                },
-                {
-                  label: "Atualizada em",
-                  selector: (unity) => unity.updatedAt
-                },
-                {
-                  label: "Desativada em",
-                  selector: (unity) => unity.deletedAt
-                }
-              ]}
-              options={[
-                {
-                  element: (
-                    <Button>
-                      Editar
-                    </Button>
-                  ),
-                  onClick: (unity) => console.log(`/unities/${unity.id}`)
-                },
-                {
-                  element: (
-                    <Button>
-                      Desativar
-                    </Button>
-                  ),
-                  onClick: (unity) => console.log(`/unities/${unity.id}`)
-                }
-              ]}
-            />
-          )
-        }
+        {unities.length > 0 && (
+          <DataTable
+            data={unities}
+            columns={[
+              {
+                label: "Nome",
+                selector: (unity) => unity.name,
+              },
+              {
+                label: "Criada em",
+                selector: (unity) => unity.createdAt,
+              },
+              {
+                label: "Atualizada em",
+                selector: (unity) => unity.updatedAt,
+              },
+              {
+                label: "Desativada em",
+                selector: (unity) => unity.deletedAt,
+              },
+            ]}
+            options={[
+              {
+                element: <Button>Editar</Button>,
+                onClick: (unity) => console.log(`/unities/${unity.id}`),
+              },
+              {
+                element: <Button>Desativar</Button>,
+                onClick: (unity) => console.log(`/unities/${unity.id}`),
+              },
+            ]}
+          />
+        )}
       </Box>
     </Box>
   );
