@@ -1,34 +1,15 @@
 import {
   Box,
-  Collapse,
-  Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
 } from "@mui/material";
-import stylesDashboard from "../style/Dashboard.module.css";
-import { useState } from "react";
-import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
-import LogoutIcon from "@mui/icons-material/Logout";
-import Plot from "react-plotly.js";
-import { useNavigate } from "react-router-dom";
 import LeftBar from "../components/LeftBar";
+import PlotGraph from "../components/PlotGraph";
 
 export default function Dashboard() {
-  const chartData = {
-    x: ["Unidade 1", "Unidade 2", "Unidade 3", "Unidade 4"],
-    y: [100, 200, 300, 400],
-    type: "bar",
-  };
-
   const requisitos = [
     "Requisito 1",
     "Requisito 2",
@@ -68,19 +49,10 @@ export default function Dashboard() {
         sx={{
           width: "calc(100% - 280px)",
           p: 2,
+          overflowY: "auto",
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-            height: "50%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Plot data={[chartData]} />
-        </Box>
+        <PlotGraph />
 
         <Box
           sx={{
