@@ -10,6 +10,8 @@ import stylesDashboard from "../style/Dashboard.module.css";
 import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import { useNavigate } from "react-router-dom";
 
 export default function LeftBar() {
@@ -43,6 +45,12 @@ export default function LeftBar() {
               <PeopleIcon style={{ color: "#1e3932" }} />
             </ListItemIcon>
             <ListItemText primary="Unidades" />
+          </ListItemButton>
+          <ListItemButton onClick={() => navigate("/requirements")}>
+            <ListItemIcon>
+              <AccountTreeIcon style={{ color: "#1e3932" }} />
+            </ListItemIcon>
+            <ListItemText primary="Requisitos" />
           </ListItemButton>
           <ListItem disablePadding>
             <ListItemButton>
