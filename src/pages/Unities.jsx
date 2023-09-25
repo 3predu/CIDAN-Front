@@ -164,10 +164,11 @@ export default function Unities() {
               variant="contained"
               sx={{
                 marginRight: "10px",
-                backgroundColor: "#2eb82e",
-                color: "#fff",
+                backgroundColor: "#d4e9e2",
+                color: "#2eb82e",
                 "&:hover": {
                   backgroundColor: "#2eb82e",
+                  color: "#fff",
                   opacity: 0.8,
                 },
                 width: "125px",
@@ -187,10 +188,11 @@ export default function Unities() {
             <Button
               variant="contained"
               sx={{
-                backgroundColor: "#2eb82e",
-                color: "#fff",
+                backgroundColor: "#d4e9e2",
+                color: "#2eb82e",
                 "&:hover": {
                   backgroundColor: "#2eb82e",
+                  color: "#fff",
                   opacity: 0.8,
                 },
               }}
@@ -226,6 +228,14 @@ export default function Unities() {
             options={[
               {
                 element: <Button>Editar</Button>,
+                onClick: (unity) => console.log(`/unities/${unity.id}`),
+              },
+              {
+                element: (
+                  <Button onClick={() => navigate("/requirementunities")}>
+                    Requisitos
+                  </Button>
+                ),
                 onClick: (unity) => console.log(`/unities/${unity.id}`),
               },
               {

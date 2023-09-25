@@ -84,14 +84,14 @@ export default function DataTable({ data, columns, options }) {
         <Table>
           <TableHead
             sx={{
-              backgroundColor: "#2eb82e",
+              backgroundColor: "#d4e9e2",
             }}
           >
             <TableRow>
               {columns.map((column) => (
                 <TableCell
                   sx={{
-                    color: "#fff",
+                    color: "#2eb82e",
                   }}
                 >
                   {column.label}
