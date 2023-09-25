@@ -11,6 +11,7 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Unities from "./pages/Unities";
 import Requirements from "./pages/Requirements";
+import RequirementUnities from "./pages/RequirimentsUnities";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
   {
     path: "/requirements",
     element: <Requirements />,
-  }
+  },
+  {
+    path: "/requirementunities",
+    element: <RequirementUnities />,
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
