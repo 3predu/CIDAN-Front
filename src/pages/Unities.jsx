@@ -52,10 +52,7 @@ export default function Unities() {
       const unity = new UnityModel({ name: unityName });
 
       const { message } = await unity.create();
-      // navigate("/unities", {
-      //   state: { message, severity: "success" },
-      //   replace: true,
-      // });
+      
       setMessageAlert(message);
       setSeverityAlert("success");
       setAlertOpen(true);
@@ -232,11 +229,11 @@ export default function Unities() {
               },
               {
                 element: (
-                  <Button onClick={() => navigate("/requirementunities")}>
+                  <Button>
                     Requisitos
                   </Button>
                 ),
-                onClick: (unity) => console.log(`/unities/${unity.id}`),
+                onClick: (unity) => navigate(`/unities/${unity.id}/requirements`),
               },
               {
                 element: <Button>Desativar</Button>,

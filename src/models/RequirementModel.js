@@ -3,18 +3,23 @@ import EmptyFieldException from "../exceptions/EmptyFieldException";
 import BadRequestException from "../exceptions/BadRequestException";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
 import CustomException from "../exceptions/CustomException";
+import ServerSideException from "../exceptions/BadRequestException";
 
 export default class RequirementModel {
     #id;
     #name;
     #pointAmount;
     #description;
+    #createdAt;
+    #updatedAt;
 
-    constructor({ id, name, pointAmount, description }) {
+    constructor({ id, name, pointAmount, description, createdAt, updatedAt }) {
         this.#id = id;
         this.#name = name;
         this.#pointAmount = pointAmount;
         this.#description = description;
+        this.#createdAt = createdAt;
+        this.#updatedAt = updatedAt;
     }
 
     get id() {
@@ -33,6 +38,14 @@ export default class RequirementModel {
         return this.#description;
     }
 
+    get createdAt() {
+        return this.#createdAt;
+    }
+
+    get updatedAt() {
+        return this.#updatedAt;
+    }
+
     async create() {
         try {
             if (!this.#name) {
@@ -46,8 +59,6 @@ export default class RequirementModel {
                 pointAmount: this.#pointAmount,
                 description: this.#description
             }
-
-            console.log(requestBody);
 
             const response = await fetch(`${API_URL}/requirements`, {
                 method: 'POST',
@@ -71,6 +82,53 @@ export default class RequirementModel {
 
                 case 401:
                     throw new UnauthorizedException(responseBody.message, 'warning');
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, 'error');
+
+                default:
+                    throw new CustomException(`Erro inesperado: ${responseBody.message}`, 'warning');
+            }
+        } catch (error) {
+            if (error.constructor === Error) {
+                throw new CustomException(`Erro inesperado: ${error.message}`, 'warning');
+            }
+
+            throw error;
+        }
+    }
+
+    async findMany() {
+        try {
+            const endpoint = `${API_URL}/requirements?name=${this.#name}&pointAmount=${this.#pointAmount}&description=${this.#description}`;
+
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const reponseStatus = response.status;
+
+            const responseBody = await response.json();
+
+            switch (reponseStatus) {
+                case 200:
+                    return responseBody;
+
+                case 400:
+                    throw new BadRequestException(responseBody.message, 'warning');
+
+                case 401:
+                    throw new UnauthorizedException(responseBody.message, 'warning');
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, 'error');
 
                 default:
                     throw new CustomException(`Erro inesperado: ${responseBody.message}`, 'warning');

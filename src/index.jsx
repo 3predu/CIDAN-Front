@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     element: <Requirements />,
   },
   {
-    path: "/requirementunities",
+    path: "/unities/:id/requirements",
     element: <RequirementUnities />,
   },
 ]);

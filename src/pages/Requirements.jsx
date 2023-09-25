@@ -9,6 +9,7 @@ import ServerSideException from "../exceptions/ServerSideException";
 import CustomException from "../exceptions/CustomException";
 import BadRequestException from "../exceptions/BadRequestException";
 import EmptyFieldException from "../exceptions/EmptyFieldException";
+import DataTable from "../components/DataTable";
 
 export default function Requirements() {
     const [alertOpen, setAlertOpen] = useState(false);
@@ -22,7 +23,51 @@ export default function Requirements() {
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [loadingAdd, setLoadingAdd] = useState(false);
 
-    async function searchRequirements() { }
+    const [requirements, setRequirements] = useState([]);
+
+    async function searchRequirements() {
+        try {
+            setLoadingSearch(true);
+
+            const requirementSearchContent = {
+                name: requirementName,
+                description: requirementDescription,
+                pointAmount: pointsAmount
+            }
+
+            const { requirements } = await new RequirementModel({ ...requirementSearchContent }).findMany();
+
+            setRequirements(requirements);
+
+            if (requirements.length === 0) {
+                setAlertMessage("Nenhum requisito encontrado");
+                setAlertSeverity("info");
+                setAlertOpen(true);
+            }
+        } catch (error) {
+            console.log(error);
+
+            if (error instanceof UnauthorizedException) {
+                setAlertMessage(error.message);
+                setAlertSeverity(error.severityAlert);
+                setAlertOpen(true);
+            } else if (error instanceof ServerSideException) {
+                setAlertMessage(error.message);
+                setAlertSeverity(error.severityAlert);
+                setAlertOpen(true);
+            } else if (error instanceof CustomException) {
+                setAlertMessage(error.message);
+                setAlertSeverity(error.severityAlert);
+                setAlertOpen(true);
+            } else if (error instanceof BadRequestException) {
+                setAlertMessage(error.message);
+                setAlertSeverity(error.severityAlert);
+                setAlertOpen(true);
+            }
+        } finally {
+            setLoadingSearch(false);
+        }
+    }
 
     async function addRequirement() {
         try {
@@ -127,7 +172,7 @@ export default function Requirements() {
                             onChange={(e) => setRequirementName(e.target.value)}
                         />
                     </Grid>
-                    
+
                     <Grid
                         item
                         xs={12}
@@ -225,6 +270,40 @@ export default function Requirements() {
                         </Button>
                     </Grid>
                 </Grid>
+
+                {requirements.length > 0 && (
+                    <DataTable
+                        data={requirements}
+                        columns={[
+                            {
+                                label: "Nome",
+                                selector: (requirement) => requirement.name,
+                            },
+                            {
+                                label: "Descrição",
+                                selector: (requirement) => requirement.description,
+                            },
+                            {
+                                label: "Pontos",
+                                selector: (requirement) => requirement.pointAmount,
+                            },
+                            {
+                                label: "Criado em",
+                                selector: (requirement) => requirement.createdAt,
+                            },
+                            {
+                                label: "Atualizado em",
+                                selector: (requirement) => requirement.updatedAt,
+                            }
+                        ]}
+                        options={[
+                            {
+                                element: <Button>Editar</Button>,
+                                onClick: (unity) => console.log(`/unities/${unity.id}`),
+                            }
+                        ]}
+                    />
+                )}
             </Box>
         </Box>
     );

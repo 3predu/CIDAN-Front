@@ -3,6 +3,8 @@ import UnauthorizedException from "../exceptions/UnauthorizedException";
 import { API_URL } from "../config";
 import EmptyFieldException from "../exceptions/EmptyFieldException";
 import BadRequestException from "../exceptions/BadRequestException";
+import CustomException from "../exceptions/CustomException";
+import NotFoundException from "../exceptions/NotFoundException";
 
 export default class UnityModel {
     #id;
@@ -127,6 +129,52 @@ export default class UnityModel {
                     throw new ServerSideException(message, "error");
             }
         } catch (error) {
+            throw error;
+        }
+    }
+
+    async findById() {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/unity/${this.#id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const statusResponse = response.status;
+
+            const responseBody = await response.json();
+
+            switch (statusResponse) {
+                case 200:
+                    return responseBody;
+
+                case 400:
+                    throw new BadRequestException(responseBody.message, "warning");
+
+                case 401:
+                    throw new UnauthorizedException(responseBody.message, "warning");
+
+                case 404:
+                    throw new NotFoundException(responseBody.message, "warning");
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, "error");
+
+                default:
+                    throw new CustomException("Erro inesperado", "error");
+            }
+
+        } catch (error) {
+            if (error.constructor === Error) {
+                throw CustomException(`Erro inesperado: ${error.message}`, "error");
+            }
+
             throw error;
         }
     }
