@@ -178,4 +178,97 @@ export default class UnityModel {
             throw error;
         }
     }
+
+    async getRequirements() {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/unity/${this.#id}/requirements`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const statusResponse = response.status;
+
+            const responseBody = await response.json();
+
+            switch (statusResponse) {
+                case 200:
+                    return responseBody;
+
+                case 400:
+                    throw new BadRequestException(responseBody.message, "warning");
+
+                case 401:
+                    throw new UnauthorizedException(responseBody.message, "warning");
+
+                case 404:
+                    throw new NotFoundException(responseBody.message, "warning");
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, "error");
+
+                default:
+                    throw new CustomException("Erro inesperado", "error");
+            }
+        } catch (error) {
+            if (error.constructor === Error) {
+                throw CustomException(`Erro inesperado: ${error.message}`, "error");
+            }
+
+            throw error;
+        }
+    }
+
+    async saveRequirements(requirements) {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/unity/${this.#id}/requirements`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(requirements)
+            });
+
+            const statusResponse = response.status;
+
+            const responseBody = await response.json();
+
+            console.log(responseBody);
+
+            switch (statusResponse) {
+                case 200:
+                    return responseBody;
+
+                case 400:
+                    throw new BadRequestException(responseBody.message, "warning");
+
+                case 401:
+                    throw new UnauthorizedException(responseBody.message, "warning");
+
+                case 404:
+                    throw new NotFoundException(responseBody.message, "warning");
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, "error");
+
+                default:
+                    throw new CustomException("Erro inesperado", "error");
+            }
+        } catch (error) {
+            if (error.constructor === Error) {
+                throw CustomException(`Erro inesperado: ${error.message}`, "error");
+            }
+
+            throw error;
+        }
+    }
 }

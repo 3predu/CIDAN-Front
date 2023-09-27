@@ -18,7 +18,7 @@ export default function Requirements() {
 
     const [requirementName, setRequirementName] = useState("");
     const [requirementDescription, setRequirementDescription] = useState("");
-    const [pointsAmount, setPointsAmount] = useState(0);
+    const [maxPoint, setMaxPoint] = useState(0);
 
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [loadingAdd, setLoadingAdd] = useState(false);
@@ -32,7 +32,7 @@ export default function Requirements() {
             const requirementSearchContent = {
                 name: requirementName,
                 description: requirementDescription,
-                pointAmount: pointsAmount
+                maxPoint
             }
 
             const { requirements } = await new RequirementModel({ ...requirementSearchContent }).findMany();
@@ -75,7 +75,7 @@ export default function Requirements() {
 
             const requirementModelProps = {
                 name: requirementName,
-                pointAmount: pointsAmount,
+                maxPoint,
                 description: requirementDescription
             }
 
@@ -188,11 +188,11 @@ export default function Requirements() {
                                 const pointNumber = parseInt(e.target.value);
 
                                 if (isNaN(pointNumber)) {
-                                    setPointsAmount(0);
+                                    setMaxPoint(0);
                                 } else if (pointNumber < 0) {
-                                    setPointsAmount(0);
+                                    setMaxPoint(0);
                                 } else {
-                                    setPointsAmount(pointNumber);
+                                    setMaxPoint(pointNumber);
                                 }
                             }}
                         />
@@ -285,7 +285,7 @@ export default function Requirements() {
                             },
                             {
                                 label: "Pontos",
-                                selector: (requirement) => requirement.pointAmount,
+                                selector: (requirement) => requirement.maxPoint,
                             },
                             {
                                 label: "Criado em",

@@ -8,15 +8,15 @@ import ServerSideException from "../exceptions/BadRequestException";
 export default class RequirementModel {
     #id;
     #name;
-    #pointAmount;
+    #maxPoint;
     #description;
     #createdAt;
     #updatedAt;
 
-    constructor({ id, name, pointAmount, description, createdAt, updatedAt }) {
+    constructor({ id, name, maxPoint, description, createdAt, updatedAt }) {
         this.#id = id;
         this.#name = name;
-        this.#pointAmount = pointAmount;
+        this.#maxPoint = maxPoint;
         this.#description = description;
         this.#createdAt = createdAt;
         this.#updatedAt = updatedAt;
@@ -30,8 +30,8 @@ export default class RequirementModel {
         return this.#name;
     }
 
-    get pointAmount() {
-        return this.#pointAmount;
+    get maxPoint() {
+        return this.#maxPoint;
     }
 
     get description() {
@@ -56,7 +56,7 @@ export default class RequirementModel {
 
             const requestBody = {
                 name: this.#name,
-                pointAmount: this.#pointAmount,
+                maxPoint: this.#maxPoint,
                 description: this.#description
             }
 
@@ -100,7 +100,7 @@ export default class RequirementModel {
 
     async findMany() {
         try {
-            const endpoint = `${API_URL}/requirements?name=${this.#name}&pointAmount=${this.#pointAmount}&description=${this.#description}`;
+            const endpoint = `${API_URL}/requirements?name=${this.#name}&maxPoint=${this.#maxPoint}&description=${this.#description}`;
 
             const token = localStorage.getItem('token');
 
