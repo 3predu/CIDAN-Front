@@ -10,8 +10,11 @@ import CustomException from "../exceptions/CustomException";
 import BadRequestException from "../exceptions/BadRequestException";
 import EmptyFieldException from "../exceptions/EmptyFieldException";
 import DataTable from "../components/DataTable";
+import { useNavigate } from "react-router-dom";
 
 export default function Requirements() {
+    const navigate = useNavigate();
+
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("");
@@ -22,6 +25,7 @@ export default function Requirements() {
 
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [loadingAdd, setLoadingAdd] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState(false);
 
     const [requirements, setRequirements] = useState([]);
 
@@ -110,6 +114,37 @@ export default function Requirements() {
             }
         } finally {
             setLoadingAdd(false);
+        }
+    }
+
+    async function deleteRequirement(unityId) {
+        try {
+            setLoadingDelete(true);
+
+            const { message, severityWarning } = await new RequirementModel({ id: unityId }).deleteById();
+
+            setAlertMessage(message);
+            setAlertSeverity(severityWarning);
+            setAlertOpen(true);
+
+            const requirementSearchContent = {
+                name: "",
+                description: "",
+                maxPoint: 0
+            }
+
+            const { requirements } = await new RequirementModel({ ...requirementSearchContent }).findMany();
+
+            setRequirements(requirements);
+        } catch (error) {
+            const alertMessage = error.message || "Erro ao deletar requisito";
+            const alertSeverity = error.severityAlert || "error";
+
+            setAlertMessage(alertMessage);
+            setAlertSeverity(alertSeverity);
+            setAlertOpen(true);
+        } finally {
+            setLoadingDelete(false);
         }
     }
 
@@ -271,39 +306,59 @@ export default function Requirements() {
                     </Grid>
                 </Grid>
 
-                {requirements.length > 0 && (
-                    <DataTable
-                        data={requirements}
-                        columns={[
-                            {
-                                label: "Nome",
-                                selector: (requirement) => requirement.name,
-                            },
-                            {
-                                label: "Descrição",
-                                selector: (requirement) => requirement.description,
-                            },
-                            {
-                                label: "Pontos",
-                                selector: (requirement) => requirement.maxPoint,
-                            },
-                            {
-                                label: "Criado em",
-                                selector: (requirement) => requirement.createdAt,
-                            },
-                            {
-                                label: "Atualizado em",
-                                selector: (requirement) => requirement.updatedAt,
-                            }
-                        ]}
-                        options={[
-                            {
-                                element: <Button>Editar</Button>,
-                                onClick: (unity) => console.log(`/unities/${unity.id}`),
-                            }
-                        ]}
-                    />
-                )}
+                {
+                    loadingDelete ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "100%",
+                            }}
+                        >
+                            <CircularProgress />
+                            <Typography>
+                                Deletando requisito...
+                            </Typography>
+                        </Box>
+                    ) : requirements.length > 0 ? (
+                        <DataTable
+                            data={requirements}
+                            columns={[
+                                {
+                                    label: "Nome",
+                                    selector: (requirement) => requirement.name,
+                                },
+                                {
+                                    label: "Descrição",
+                                    selector: (requirement) => requirement.description,
+                                },
+                                {
+                                    label: "Pontos",
+                                    selector: (requirement) => requirement.maxPoint,
+                                },
+                                {
+                                    label: "Criado em",
+                                    selector: (requirement) => requirement.createdAt,
+                                },
+                                {
+                                    label: "Atualizado em",
+                                    selector: (requirement) => requirement.updatedAt,
+                                }
+                            ]}
+                            options={[
+                                {
+                                    element: <Button>Editar</Button>,
+                                    onClick: (unity) => navigate(`/unities/${unity.id}`),
+                                },
+                                {
+                                    element: <Button>Excluir</Button>,
+                                    onClick: (unity) => deleteRequirement(unity.id)
+                                }
+                            ]}
+                        />
+                    ) : <></>
+                }
             </Box>
         </Box>
     );

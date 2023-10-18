@@ -93,7 +93,7 @@ export default class UnityModel {
 
     async update() {}
 
-    async delete() {}
+    async deleteById() {}
 
     async findMany(name) {
         try {

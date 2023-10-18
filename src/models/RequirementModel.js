@@ -141,4 +141,46 @@ export default class RequirementModel {
             throw error;
         }
     }
+
+    async deleteById() {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/requirements/${this.#id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const reponseStatus = response.status;
+
+            const responseBody = await response.json();
+
+            switch (reponseStatus) {
+                case 200:
+                    return responseBody;
+
+                case 400:
+                    throw new BadRequestException(responseBody.message, 'warning');
+
+                case 401:
+                    throw new UnauthorizedException(responseBody.message, 'warning');
+
+                case 500:
+                    throw new ServerSideException(responseBody.message, 'error');
+
+                default:
+                    throw new CustomException(`Erro inesperado: ${responseBody.message}`, 'warning');
+            }
+        } catch (error) {
+            if (error.constructor === Error) {
+                throw new CustomException(`Erro inesperado: ${error.message}`, 'warning');
+            }
+
+            throw error;
+        }
+    }
 }
