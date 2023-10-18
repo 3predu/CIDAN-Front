@@ -50,17 +50,11 @@ export default function PlotGraph() {
           }}
         >
           <CircularProgress />
-          <Typography>
-            Pegando dados do gráfico.
-          </Typography>
+          <Typography>Pegando dados do gráfico.</Typography>
         </Box>
       );
     } else if (chartData.length === 0) {
-      return (
-        <Typography>
-          Nenhum dado encontrado.
-        </Typography>
-      );
+      return <Typography>Nenhum dado encontrado.</Typography>;
     } else {
       return (
         <Plot

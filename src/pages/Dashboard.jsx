@@ -6,7 +6,7 @@ import {
   TableCell,
   TableBody,
   CircularProgress,
-  Typography
+  Typography,
 } from "@mui/material";
 import LeftBar from "../components/LeftBar";
 import PlotGraph from "../components/PlotGraph";
@@ -51,61 +51,67 @@ export default function Dashboard() {
       >
         <PlotGraph />
 
-        {
-          loadInit ? (
-            <Box
-              sx={{
-                dispaly: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress />
-              <Typography>
-                Pegando dados da tabela.
-              </Typography>
-            </Box>
-          ) : tableData.length === 0 ? (
-            <Typography>
-              Nenhum dado encontrado.
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                width: "100%",
-                height: "50%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Requisito</TableCell>
+        {loadInit ? (
+          <Box
+            sx={{
+              dispaly: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress />
+            <Typography>Pegando dados da tabela.</Typography>
+          </Box>
+        ) : tableData.length === 0 ? (
+          <Typography>Nenhum dado encontrado.</Typography>
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Requisito</TableCell>
+                  {tableData.map((data) => (
+                    <TableCell key={`Unidade-${data.unityName}`}>
+                      {data.unityName}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableData[0].requirements.map((requirement) => (
+                  <TableRow key={`Requisito-${requirement.name}`}>
+                    <TableCell>{requirement.name}</TableCell>
                     {tableData.map((data) => (
-                      <TableCell key={`Unidade-${data.unityName}`}>{data.unityName}</TableCell>
+                      <TableCell
+                        key={`Unidade-${data.unityName}-Requisito-${requirement.name}`}
+                      >
+                        {
+                          data.requirements.find(
+                            (req) => req.name === requirement.name
+                          ).point
+                        }
+                      </TableCell>
                     ))}
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tableData[0].requirements.map((requirement) => (
-                    <TableRow key={`Requisito-${requirement.name}`}>
-                      <TableCell>{requirement.name}</TableCell>
-                      {tableData.map((data) => (
-                        <TableCell key={`Unidade-${data.unityName}-Requisito-${requirement.name}`}>{data.requirements.find((req) => req.name === requirement.name).point}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                  <TableCell>Total</TableCell>
-                  {tableData.map((data) => (
-                    <TableCell key={`Unidade-${data.unityName}-Total`}>{data.total}</TableCell>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          )
-        }
+                ))}
+                <TableCell>Total</TableCell>
+                {tableData.map((data) => (
+                  <TableCell key={`Unidade-${data.unityName}-Total`}>
+                    {data.total}
+                  </TableCell>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        )}
       </Box>
     </Box>
   );
